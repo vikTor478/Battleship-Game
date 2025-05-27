@@ -40,6 +40,11 @@ void Game::quit()
     running = false;
 }
 
+void Game::setDifficultyLevel(DifficultyLevel level)
+{
+    difficultyLevel = level;
+}
+
 void Game::setPlayerBoard(Board* board)
 {
     if(playerBoard) { delete playerBoard; }
@@ -50,6 +55,11 @@ void Game::setOpponentBoard(Board* board)
 {
     if(opponentBoard) { delete opponentBoard; }
     opponentBoard = board;
+}
+
+DifficultyLevel Game::getDifficultyLevel() const
+{
+    return difficultyLevel;
 }
 
 Board* Game::getPlayerBoard()

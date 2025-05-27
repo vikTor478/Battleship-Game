@@ -2,11 +2,26 @@
 #include "PlayerTurnState.h"
 #include "Renderer.h"
 #include "Game.h"
+#include "InputParseHandler.h"
 #include <iostream>
 #include <chrono>
 #include <thread>
 
 
+void showThinkingAnimation() 
+{
+    std::string base = "Opponent's turn";
+    std::string dots[] = {".  ", ".. ", "..."};
+
+    for (int i = 0; i < 3; ++i) 
+    {
+        for (const std::string& d : dots) 
+        {
+            std::cout << "\r" << base << d << std::flush;
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        }
+    }
+}
 
 void EnemyTurnState::enter(Game& game)
 {
@@ -17,37 +32,34 @@ void EnemyTurnState::enter(Game& game)
     } 
     else 
     {
-        std::cerr << "Error: boards are bot initialized\n";
+        std::cerr << "Error: boards are not initialized\n";
     }
 }
 
 void EnemyTurnState::update(Game& game)
 {
-    std::cout << "Enemy turn logic\n";
-    int x = std::rand() % 10;
-    int y = std::rand() % 10;
+    std::pair<int, int> targetCell;
 
-    Board* playerBoard = game.getPlayerBoard();
+    switch (game.getDifficultyLevel()) 
+    {
+        case DifficultyLevel::Easy:
+            targetCell = performEasyAI(game);
+            break;
 
-    CellState targetCellState = playerBoard -> GetCellState(x, y);
+        case DifficultyLevel::Medium:
+            targetCell = performMediumAI(game);
+            break;
+
+        case DifficultyLevel::Hard:
+            targetCell = performHardAI(game);
+            break;
+    }
 
     showThinkingAnimation();
 
-    while(targetCellState == Miss || targetCellState == Hit)
-    {
-        x = std::rand() % 10;
-        y = std::rand() % 10;
+    std::cout << "Opponent targeted cell " << InputParseHandler::parseToString(targetCell.first, targetCell.second) << "\n";
 
-        targetCellState = playerBoard -> GetCellState(x, y);
-    }
-
-    
-
-    playerBoard -> MarkHit(x, y);
-
-    std::cout << "Enemy target at cell B4.\n";
-
-    if(targetCellState == Hit)
+    if(game.getPlayerBoard() -> getCellState(targetCell.first, targetCell.second) == Hit)
     {
         game.changeState(new EnemyTurnState());
     }
@@ -62,16 +74,97 @@ void EnemyTurnState::exit(Game& game)
     std::cout << "--- Enemy turn ended ---\n";
 }
 
-void EnemyTurnState::showThinkingAnimation() 
+std::pair<int, int> EnemyTurnState::performEasyAI(Game& game) 
 {
-    std::string base = "Opponent thinking";
-    std::string dots[] = {".  ", ".. ", "..."};
+    Board* playerBoard = game.getPlayerBoard();
+    int x, y;
 
-    for (int i = 0; i < 3; ++i) 
+    do 
     {
-        for (const std::string& d : dots) {
-            std::cout << "\r" << base << d << std::flush;
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        x = rand() % 10;
+        y = rand() % 10;
+    } 
+    while (playerBoard->wasAlreadyShot(x, y));
+
+    playerBoard -> markHit(x, y);
+    return { x, y };
+}
+
+std::pair<int, int> EnemyTurnState::performMediumAI(Game& game) 
+{
+    Board* playerBoard = game.getPlayerBoard();
+
+    if (!targetQueue.empty()) 
+    {
+        auto [x, y] = targetQueue.back();
+        targetQueue.pop_back();
+
+        if (!playerBoard->wasAlreadyShot(x, y)) 
+        {
+            bool hit = playerBoard->markHit(x, y);
+            if (hit) 
+            {
+                enqueueAdjacentTargets(x, y, playerBoard);
+            }
+            return { x, y };
         }
     }
+
+    int x, y;
+    do 
+    {
+        x = rand() % 10;
+        y = rand() % 10;
+    } 
+    while (playerBoard -> wasAlreadyShot(x, y));
+
+    bool hit = playerBoard -> markHit(x, y);
+    if (hit) 
+    {
+        enqueueAdjacentTargets(x, y, playerBoard);
+    }
+    return { x, y };
+}
+
+std::pair<int, int> EnemyTurnState::performHardAI(Game& game) 
+{
+    Board* playerBoard = game.getPlayerBoard();
+
+    if (!targetQueue.empty()) 
+    {
+        auto [x, y] = targetQueue.back();
+        targetQueue.pop_back();
+
+        if (!playerBoard -> wasAlreadyShot(x, y)) 
+        {
+            bool hit = playerBoard -> markHit(x, y);
+            if (hit) 
+            {
+                enqueueAdjacentTargets(x, y, playerBoard);
+            }
+            return { x, y };
+        }
+    }
+
+    int x, y;
+    do 
+    {
+        x = rand() % 10;
+        y = rand() % 10;
+    } while ((x + y) % 2 != 0 || playerBoard -> wasAlreadyShot(x, y));
+
+    bool hit = playerBoard -> markHit(x, y);
+    if (hit) 
+    {
+        enqueueAdjacentTargets(x, y, playerBoard);
+    }
+    return { x, y };
+}
+
+void EnemyTurnState::enqueueAdjacentTargets(int x, int y, Board* board) 
+{
+    if (x > 0 && !board->wasAlreadyShot(x - 1, y)) targetQueue.emplace_back(x - 1, y);
+    if (x < 9 && !board->wasAlreadyShot(x + 1, y)) targetQueue.emplace_back(x + 1, y);
+    if (y > 0 && !board->wasAlreadyShot(x, y - 1)) targetQueue.emplace_back(x, y - 1);
+    if (y < 9 && !board->wasAlreadyShot(x, y + 1)) targetQueue.emplace_back(x, y + 1);
 }

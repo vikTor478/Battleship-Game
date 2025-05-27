@@ -17,7 +17,7 @@ Board::~Board()
     std::cout << "Board removed\n";
 }
 
-void Board::PlaceShip(int x, int y, int length, bool horizontal) 
+void Board::placeShip(int x, int y, int length, bool horizontal) 
 {
     for (int i = 0; i < length; ++i) 
     {
@@ -27,19 +27,26 @@ void Board::PlaceShip(int x, int y, int length, bool horizontal)
     }
 }
 
-void Board::MarkHit(int x, int y) 
+bool Board::markHit(int x, int y) 
 {
     if (grid[x][y] == Ship)
     {
         grid[x][y] = Hit;
+        return true;
     }    
     else
     {
         grid[x][y] = Miss;
+        return false;
     }
 }
 
-CellState Board::GetCellState(int x, int y) const 
+CellState Board::getCellState(int x, int y) const 
 {
     return grid[x][y];
+}
+
+bool Board::wasAlreadyShot(int x, int y) const
+{
+    return getCellState(x, y) == Miss || getCellState(x, y) == Hit;
 }

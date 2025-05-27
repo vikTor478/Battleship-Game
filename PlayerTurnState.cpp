@@ -27,7 +27,7 @@ void PlayerTurnState::update(Game& game)
 
     while (true) 
     {
-        std::cout << "Enter cell coords (for example, B4): ";
+        std::cout << "Your turn. Enter coordinates (e.g., B4): \n";
         std::cin >> input;
         inputPair = InputParseHandler::parseCoordinates(input);
 
@@ -41,9 +41,9 @@ void PlayerTurnState::update(Game& game)
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 
-    game.getOpponentBoard() -> MarkHit(inputPair.first, inputPair.second);
+    game.getOpponentBoard() -> markHit(inputPair.first, inputPair.second);
 
-    CellState targetCellState = game.getOpponentBoard() -> GetCellState(inputPair.first, inputPair.second);
+    CellState targetCellState = game.getOpponentBoard() -> getCellState(inputPair.first, inputPair.second);
 
     if(targetCellState == Hit)
     {

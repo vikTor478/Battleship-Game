@@ -17,9 +17,10 @@ public:
     Board();
     ~Board();
 
-    void MarkHit(int x, int y);
-    void PlaceShip(int x, int y, int length, bool horizontal);
-    CellState GetCellState(int x, int y) const;
+    bool markHit(int x, int y);
+    void placeShip(int x, int y, int length, bool horizontal);
+    CellState getCellState(int x, int y) const;
+    bool wasAlreadyShot(int x, int y) const;
 
 private:
     static const int SIZE = 10;

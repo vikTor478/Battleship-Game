@@ -38,7 +38,7 @@ void Renderer::Draw(const Board& playerBoard, const Board& opponentBoard)
 
         for (int y = 0; y < 10; ++y) 
         {
-            CellState state = playerBoard.GetCellState(x - 1, y);;
+            CellState state = playerBoard.getCellState(x - 1, y);;
             char symbol = '~';
             if (state == Ship) symbol = 'S';
             else if (state == Hit) symbol = 'X';
@@ -58,7 +58,7 @@ void Renderer::Draw(const Board& playerBoard, const Board& opponentBoard)
         }
         for (int y = 0; y < 10; ++y) 
         {
-            CellState state = opponentBoard.GetCellState(x - 1, y);;
+            CellState state = opponentBoard.getCellState(x - 1, y);;
             char symbol = '~';
             if (state == Ship) symbol = 'S';
             else if (state == Hit) symbol = 'X';

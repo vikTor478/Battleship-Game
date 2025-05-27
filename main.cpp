@@ -14,6 +14,8 @@ int main()
     Board* playerBoard = new Board();
     Board* opponentBoard = new Board();
 
+    game.setDifficultyLevel(DifficultyLevel::Easy);
+
     game.setPlayerBoard(playerBoard);
     game.setOpponentBoard(opponentBoard);
 

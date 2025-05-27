@@ -6,7 +6,6 @@ std::pair<int, int> InputParseHandler::parseCoordinates(const std::string& input
 {
     if (input.length() < 2 || input.length() > 3)
     {
-        std::cout << "1\n";
         return { -1, -1 };
     }
 
@@ -18,10 +17,21 @@ std::pair<int, int> InputParseHandler::parseCoordinates(const std::string& input
 
     if (x < 0 || x >= 10 || y < 0 || y >= 10)
     {
-        std::cout << "2\n";
         return { -1, -1 };
     }
     
-    std::cout<< x << y << "3\n";
     return { x, y };
+}
+
+std::string InputParseHandler::parseToString(int x, int y)
+{
+    if (x < 0 || x >= 10 || y < 0 || y >= 10) 
+    {
+        throw std::out_of_range("Coordinates out of board range");
+    }
+
+    char column = 'A' + x;
+    int row = y + 1;
+
+    return std::string(1, column) + std::to_string(row);
 }
