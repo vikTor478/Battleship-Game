@@ -2,10 +2,13 @@
 #include "GameState.h"
 #include <iostream>
 
-Game::Game() : currentState(nullptr), running(true) {}
+Game::Game() : playerBoard(nullptr), opponentBoard(nullptr), currentState(nullptr), running(true) {}
 
 Game::~Game()
 {
+    delete playerBoard;
+    delete opponentBoard;
+
     if (currentState)
     {
         currentState -> exit(*this);
@@ -35,4 +38,26 @@ void Game::run()
 void Game::quit()
 {
     running = false;
+}
+
+void Game::setPlayerBoard(Board* board)
+{
+    if(playerBoard) { delete playerBoard; }
+    playerBoard = board;
+}
+
+void Game::setOpponentBoard(Board* board)
+{
+    if(opponentBoard) { delete opponentBoard; }
+    opponentBoard = board;
+}
+
+Board* Game::getPlayerBoard()
+{
+    return playerBoard;
+}
+
+Board* Game::getOpponentBoard()
+{
+    return opponentBoard;
 }

@@ -1,4 +1,5 @@
 #include "Board.h"
+#include <iostream>
 
 Board::Board() 
 {
@@ -9,6 +10,11 @@ Board::Board()
             grid[i][j] = Empty;
         }
     }  
+}
+
+Board::~Board()
+{
+    std::cout << "Board removed\n";
 }
 
 void Board::PlaceShip(int x, int y, int length, bool horizontal) 
