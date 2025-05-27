@@ -3,6 +3,10 @@
 #include "Renderer.h"
 #include "Game.h"
 #include <iostream>
+#include <chrono>
+#include <thread>
+
+
 
 void EnemyTurnState::enter(Game& game)
 {
@@ -27,6 +31,8 @@ void EnemyTurnState::update(Game& game)
 
     CellState targetCellState = playerBoard -> GetCellState(x, y);
 
+    showThinkingAnimation();
+
     while(targetCellState == Miss || targetCellState == Hit)
     {
         x = std::rand() % 10;
@@ -35,7 +41,11 @@ void EnemyTurnState::update(Game& game)
         targetCellState = playerBoard -> GetCellState(x, y);
     }
 
+    
+
     playerBoard -> MarkHit(x, y);
+
+    std::cout << "Enemy target at cell B4.\n";
 
     if(targetCellState == Hit)
     {
@@ -50,4 +60,18 @@ void EnemyTurnState::update(Game& game)
 void EnemyTurnState::exit(Game& game)
 {
     std::cout << "--- Enemy turn ended ---\n";
+}
+
+void EnemyTurnState::showThinkingAnimation() 
+{
+    std::string base = "Opponent thinking";
+    std::string dots[] = {".  ", ".. ", "..."};
+
+    for (int i = 0; i < 3; ++i) 
+    {
+        for (const std::string& d : dots) {
+            std::cout << "\r" << base << d << std::flush;
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        }
+    }
 }
