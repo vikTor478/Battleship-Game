@@ -11,7 +11,7 @@ void PlayerTurnState::enter(Game& game)
 {
     if (game.getPlayerBoard() && game.getOpponentBoard()) 
     {
-        Renderer::Draw(*game.getPlayerBoard(), *game.getOpponentBoard());
+        Renderer::Draw(*game.getPlayerBoard(), *game.getOpponentBoard(), game.getShipCount());
         std::cout << "=== Player turn started ===\n";
     } 
     else 

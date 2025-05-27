@@ -23,5 +23,5 @@ std::pair<int, int> InputParseHandler::parseCoordinates(const std::string& input
     }
     
     std::cout<< x << y << "3\n";
-    return { x, y };
+    return { y, x };
 }

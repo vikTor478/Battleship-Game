@@ -1,9 +1,16 @@
 #include "Renderer.h"
 #include <iostream>
 
-void Renderer::Draw(const Board& playerBoard, const Board& opponentBoard) 
+void Renderer::Draw(const Board& playerBoard, const Board& opponentBoard, int shipCount) 
 {
     system("cls");
+
+    if(shipCount != -1){
+        std::cout<<"You and your opponent both have "<<shipCount;
+        if(shipCount == 1) std::cout<<" ship ";
+        else std::cout<<" ships ";
+        std::cout<<"in this game\n";
+    }
     
     std::cout << "           You            ";
     std::cout << "            Opponent";

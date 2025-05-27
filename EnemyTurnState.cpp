@@ -12,7 +12,7 @@ void EnemyTurnState::enter(Game& game)
 {
     if (game.getPlayerBoard() && game.getOpponentBoard()) 
     {
-        Renderer::Draw(*game.getPlayerBoard(), *game.getOpponentBoard());
+        Renderer::Draw(*game.getPlayerBoard(), *game.getOpponentBoard(), game.getShipCount());
         std::cout << "--- Enemy Turn Started ---\n";
     } 
     else 
