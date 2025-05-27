@@ -1,6 +1,7 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include "ShipData.h"
 #include <vector>
 
 enum CellState 
@@ -21,9 +22,15 @@ public:
     void PlaceShip(int x, int y, int length, bool horizontal);
     CellState GetCellState(int x, int y) const;
 
+    void generateShips(int shipCount);
+    void generatePlayerShips(int shipCount);
+    const std::vector<ShipData>& getShips() const;
+
 private:
     static const int SIZE = 10;
     CellState grid[SIZE][SIZE];
+    std::vector<ShipData> ships;
+    bool canPlaceShip(int x, int y, int length, bool horizontal);
 };
 
 #endif

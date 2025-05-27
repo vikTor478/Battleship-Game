@@ -19,6 +19,8 @@ int main()
 
     int shipCount = std::rand() % 4 + 1;
     game.setShipCount(shipCount);
+    playerBoard->generatePlayerShips(shipCount);
+    opponentBoard->generateShips(shipCount);
 
     game.changeState(new PlayerTurnState());
     game.run();
