@@ -1,13 +1,21 @@
-int main()
+#ifndef GAME_H
+#define Game_H
+
+class GameState;
+
+class Game
 {
+public:
+    Game();
+    ~Game();
 
-    enum gameState{
-        Player_Turn,
-        Computer_Turn,
-        Game_Over
-    };
+    void run();
+    void changeState(GameState* newState);
+    void quit();
 
-    
-    
-    return 0;
-}
+private:
+    GameState* currentState;
+    bool running;
+};
+
+#endif
