@@ -1,5 +1,6 @@
 #include "PlayerTurnState.h"
 #include "EnemyTurnState.h"
+#include "WinState.h"
 #include "Renderer.h"
 #include "Game.h"
 #include "InputParseHandler.h"
@@ -42,6 +43,11 @@ void PlayerTurnState::update(Game& game)
     }
 
     game.getOpponentBoard() -> MarkHit(inputPair.first, inputPair.second);
+
+    if(game.getOpponentBoard()->allShipsSunk()){
+        game.changeState(new WinState());
+        return;
+    }
 
     CellState targetCellState = game.getOpponentBoard() -> GetCellState(inputPair.first, inputPair.second);
 

@@ -22,9 +22,11 @@ public:
     void PlaceShip(int x, int y, int length, bool horizontal);
     CellState GetCellState(int x, int y) const;
 
-    void generateShips(int shipCount);
-    void generatePlayerShips(int shipCount);
     const std::vector<ShipData>& getShips() const;
+
+    void placeGameShips(const std::vector<int>& shipLengths);
+
+    bool allShipsSunk() const;
 
 private:
     static const int SIZE = 10;

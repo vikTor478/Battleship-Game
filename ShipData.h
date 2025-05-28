@@ -3,9 +3,14 @@
 
 struct ShipData{
     int length;
+    int hits;
 
     ShipData(int len)
-    : length(len){}
+    : length(len), hits(0){}
+
+    bool isSunk() const{
+        return hits>=length;
+    }
 };
 
 #endif

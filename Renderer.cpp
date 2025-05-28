@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include <iostream>
+#include <limits>
 
 void Renderer::Draw(const Board& playerBoard, const Board& opponentBoard, int shipCount) 
 {
@@ -75,4 +76,16 @@ void Renderer::Draw(const Board& playerBoard, const Board& opponentBoard, int sh
         }
         std::cout << std::endl;
     }
+}
+
+void Renderer::ShowEndScreen(bool won){
+    system("cls");
+
+    std::cout<<"\n\n\n";
+    std::cout<<(won ? "           YOU WIN!!!           " : "           YOU LOSE!!!           ")<<"\n";
+    std::cout<<"\n\n";
+
+    std::cout << "Press Enter to exit...";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.get();
 }

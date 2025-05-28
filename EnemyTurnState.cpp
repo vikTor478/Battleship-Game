@@ -1,5 +1,6 @@
 #include "EnemyTurnState.h"
 #include "PlayerTurnState.h"
+#include "LoseState.h"
 #include "Renderer.h"
 #include "Game.h"
 #include <iostream>
@@ -44,6 +45,11 @@ void EnemyTurnState::update(Game& game)
     
 
     playerBoard -> MarkHit(x, y);
+
+    if(playerBoard->allShipsSunk()){
+        game.changeState(new LoseState());
+        return;
+    }
 
     std::cout << "Enemy target at cell B4.\n";
 

@@ -12,13 +12,23 @@ Board::Board()
     }  
 }
 
-void Board::generateShips(int shipCount){
+void Board::placeGameShips(const std::vector<int>& shipLengths){
     ships.clear();
 
-    for (int i = 0; i < shipCount; ++i) {
-       int length = std::rand() % 4 + 2;
-    
-       ships.push_back(ShipData(length));
+    for(int length : shipLengths){
+        bool placed = false;
+
+        while(!placed){
+            bool horizontal = std::rand() % 2 == 0;
+            int x = std::rand() % SIZE;
+            int y = std::rand() % SIZE;
+
+            if(canPlaceShip(x, y, length, horizontal)){
+                PlaceShip(x, y, length, horizontal);
+                ships.push_back(ShipData(length));
+                placed = true;
+            }
+        }
     }
 }
 
@@ -46,11 +56,25 @@ void Board::MarkHit(int x, int y)
     if (grid[x][y] == Ship)
     {
         grid[x][y] = Hit;
+
+        for(ShipData& ship : ships){
+            if(!ship.isSunk()){
+                ship.hits++;
+                break;
+            }
+        }
     }    
     else
     {
         grid[x][y] = Miss;
     }
+}
+
+bool Board::allShipsSunk() const{
+    for(const ShipData& ship : ships){
+        if(!ship.isSunk()) return false;
+    }
+    return true;
 }
 
 CellState Board::GetCellState(int x, int y) const 
@@ -79,24 +103,4 @@ bool Board::canPlaceShip(int x, int y, int length, bool horizontal){
         }
     }
     return true;
-}
-
-void Board::generatePlayerShips(int shipCount){
-    ships.clear();
-
-    int placed = 0;
-
-    while (placed < shipCount) {
-        int length = std::rand() % 4 + 2;
-        bool horizontal = std::rand() % 2 == 0;
-
-        int x = std::rand() % SIZE;
-        int y = std::rand() % SIZE;
-
-        if (canPlaceShip(x, y, length, horizontal)) {
-            PlaceShip(x, y, length, horizontal);
-            ships.push_back(ShipData(length));
-            ++placed;
-        }
-    }
 }
