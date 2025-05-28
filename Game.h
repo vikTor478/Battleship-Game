@@ -30,8 +30,12 @@ public:
     Board* getPlayerBoard();
     Board* getOpponentBoard();
 
+    void setShipCount(int count);
+    int getShipCount() const;
+
 private:
     DifficultyLevel difficultyLevel;
+    int shipCount;
     GameState* currentState;
     Board* playerBoard;
     Board* opponentBoard;

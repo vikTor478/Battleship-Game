@@ -1,5 +1,6 @@
 #include "EnemyTurnState.h"
 #include "PlayerTurnState.h"
+#include "LoseState.h"
 #include "Renderer.h"
 #include "Game.h"
 #include "InputParseHandler.h"
@@ -27,7 +28,7 @@ void EnemyTurnState::enter(Game& game)
 {
     if (game.getPlayerBoard() && game.getOpponentBoard()) 
     {
-        Renderer::Draw(*game.getPlayerBoard(), *game.getOpponentBoard());
+        Renderer::Draw(*game.getPlayerBoard(), *game.getOpponentBoard(), game.getShipCount());
         std::cout << "--- Enemy Turn Started ---\n";
     } 
     else 

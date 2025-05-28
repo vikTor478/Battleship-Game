@@ -2,7 +2,7 @@
 #include "GameState.h"
 #include <iostream>
 
-Game::Game() : playerBoard(nullptr), opponentBoard(nullptr), currentState(nullptr), running(true) {}
+Game::Game() : shipCount(0), playerBoard(nullptr), opponentBoard(nullptr), currentState(nullptr), running(true) {}
 
 Game::~Game()
 {
@@ -14,6 +14,14 @@ Game::~Game()
         currentState -> exit(*this);
         delete currentState;
     }
+}
+
+void Game::setShipCount(int count){
+    shipCount = count;
+}
+
+int Game::getShipCount() const{
+    return shipCount;
 }
 
 void Game::changeState(GameState* newState)

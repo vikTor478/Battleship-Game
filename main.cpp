@@ -19,6 +19,18 @@ int main()
     game.setPlayerBoard(playerBoard);
     game.setOpponentBoard(opponentBoard);
 
+    int shipCount = std::rand() % 4 + 1;
+    game.setShipCount(shipCount);
+    
+    std::vector<int> shipLengths;
+    for(int i=0; i<shipCount; ++i){
+        int length = std::rand() % 4 + 2;
+        shipLengths.push_back(length);
+    }
+
+    playerBoard->placeGameShips(shipLengths);
+    opponentBoard->placeGameShips(shipLengths);
+
     game.changeState(new PlayerTurnState());
     game.run();
     

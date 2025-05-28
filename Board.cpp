@@ -12,6 +12,30 @@ Board::Board()
     }  
 }
 
+void Board::placeGameShips(const std::vector<int>& shipLengths){
+    ships.clear();
+
+    for(int length : shipLengths){
+        bool placed = false;
+
+        while(!placed){
+            bool horizontal = std::rand() % 2 == 0;
+            int x = std::rand() % SIZE;
+            int y = std::rand() % SIZE;
+
+            if(canPlaceShip(x, y, length, horizontal)){
+                placeShip(x, y, length, horizontal);
+                ships.push_back(ShipData(length));
+                placed = true;
+            }
+        }
+    }
+}
+
+const std::vector<ShipData>& Board::getShips() const{
+    return ships;
+}
+
 Board::~Board()
 {
     std::cout << "Board removed\n";
@@ -32,13 +56,28 @@ bool Board::markHit(int x, int y)
     if (grid[x][y] == Ship)
     {
         grid[x][y] = Hit;
+
+        for(ShipData& ship : ships){
+            if(!ship.isSunk()){
+                ship.hits++;
+                break;
+            }
+        }
         return true;
+
     }    
     else
     {
         grid[x][y] = Miss;
         return false;
     }
+}
+
+bool Board::allShipsSunk() const{
+    for(const ShipData& ship : ships){
+        if(!ship.isSunk()) return false;
+    }
+    return true;
 }
 
 CellState Board::getCellState(int x, int y) const 
@@ -49,4 +88,26 @@ CellState Board::getCellState(int x, int y) const
 bool Board::wasAlreadyShot(int x, int y) const
 {
     return getCellState(x, y) == Miss || getCellState(x, y) == Hit;
+}
+bool Board::canPlaceShip(int x, int y, int length, bool horizontal){
+    int dx = horizontal ? 1 : 0;
+    int dy = horizontal ? 0 : 1;
+
+    for(int i=0; i<length; ++i){
+        int nx = x + i * dx;
+        int ny = y + i * dy;
+
+        if(nx<0 || ny<0 || nx>=SIZE || ny>=SIZE)
+        return false;
+
+        for(int ix = nx - 1; ix <= nx + 1; ++ix){
+            for(int iy = ny - 1; iy <= ny + 1; ++ iy){
+                if(ix >= 0 && iy >= 0 && ix < SIZE && iy < SIZE){
+                    if(grid[ix][iy] == Ship)
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
 }

@@ -1,5 +1,6 @@
 #include "PlayerTurnState.h"
 #include "EnemyTurnState.h"
+#include "WinState.h"
 #include "Renderer.h"
 #include "Game.h"
 #include "InputParseHandler.h"
@@ -11,7 +12,7 @@ void PlayerTurnState::enter(Game& game)
 {
     if (game.getPlayerBoard() && game.getOpponentBoard()) 
     {
-        Renderer::Draw(*game.getPlayerBoard(), *game.getOpponentBoard());
+        Renderer::Draw(*game.getPlayerBoard(), *game.getOpponentBoard(), game.getShipCount());
         std::cout << "=== Player turn started ===\n";
     } 
     else 
@@ -42,6 +43,11 @@ void PlayerTurnState::update(Game& game)
     }
 
     game.getOpponentBoard() -> markHit(inputPair.first, inputPair.second);
+
+    if(game.getOpponentBoard()->allShipsSunk()){
+        game.changeState(new WinState());
+        return;
+    }
 
     CellState targetCellState = game.getOpponentBoard() -> getCellState(inputPair.first, inputPair.second);
 
