@@ -1,4 +1,6 @@
-#pragma once
+#ifndef BOARD_H
+#define BOARD_H
+
 #include <vector>
 
 enum CellState 
@@ -13,6 +15,8 @@ class Board
 {
 public:
     Board();
+    ~Board();
+
     void MarkHit(int x, int y);
     void PlaceShip(int x, int y, int length, bool horizontal);
     CellState GetCellState(int x, int y) const;
@@ -21,3 +25,5 @@ private:
     static const int SIZE = 10;
     CellState grid[SIZE][SIZE];
 };
+
+#endif

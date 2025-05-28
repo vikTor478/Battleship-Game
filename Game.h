@@ -1,13 +1,31 @@
-int main()
+#ifndef GAME_H
+#define Game_H
+
+#include "Board.h"
+
+class GameState;
+
+class Game
 {
+public:
+    Game();
+    ~Game();
 
-    enum gameState{
-        Player_Turn,
-        Computer_Turn,
-        Game_Over
-    };
+    void run();
+    void changeState(GameState* newState);
+    void quit();
 
-    
-    
-    return 0;
-}
+    void setPlayerBoard(Board* playerBoard);
+    void setOpponentBoard(Board* opponentBoard);
+
+    Board* getPlayerBoard();
+    Board* getOpponentBoard();
+
+private:
+    GameState* currentState;
+    Board* playerBoard;
+    Board* opponentBoard;
+    bool running;
+};
+
+#endif

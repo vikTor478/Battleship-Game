@@ -3,6 +3,8 @@
 
 void Renderer::Draw(const Board& playerBoard, const Board& opponentBoard) 
 {
+    system("cls");
+    
     std::cout << "           You            ";
     std::cout << "            Opponent";
     std::cout << std::endl;
