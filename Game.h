@@ -1,7 +1,8 @@
 #ifndef GAME_H
-#define Game_H
+#define GAME_H
 
 #include "Board.h"
+#include <iostream>
 
 enum DifficultyLevel 
 {
@@ -34,6 +35,21 @@ public:
     int getShipCount() const;
     static std::vector<std::pair<int, int>> targetQueue;
 
+    void incrementPlayerTurn();
+    void incrementPlayerHit();
+    void incrementPlayerMiss();
+
+    int getPlayerTurns() const;
+    int getPlayerHits() const;
+    int getPlayerMisses() const;
+    double getPlayerAccuracy() const;
+
+    Game& operator++();
+
+    operator bool() const;
+
+    friend std::ostream& operator<<(std::ostream& os, const Game& game);
+
 private:
     DifficultyLevel difficultyLevel;
     int shipCount;
@@ -41,6 +57,9 @@ private:
     Board* playerBoard;
     Board* opponentBoard;
     bool running;
+    int playerTurns = 0;
+    int playerHits = 0;
+    int playerMisses = 0;
 };
 
 #endif

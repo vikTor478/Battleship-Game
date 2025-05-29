@@ -5,6 +5,8 @@
 
 class PlayerTurnState : public GameState
 {
+private:
+    bool isExtraTurn = false;
 public:
     virtual void enter(Game& game) override;
     virtual void update(Game& game) override;

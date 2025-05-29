@@ -10,6 +10,8 @@
 
 void PlayerTurnState::enter(Game& game)
 {
+    isExtraTurn = false;
+
     if (game.getPlayerBoard() && game.getOpponentBoard()) 
     {
         Renderer::Draw(*game.getPlayerBoard(), *game.getOpponentBoard(), game.getShipCount());
@@ -25,30 +27,48 @@ void PlayerTurnState::update(Game& game)
 {
     std::string input;
     std::pair<int,int> inputPair = { 0, 0 };
+   
+    if(!isExtraTurn){
+            std::cout<<"Your turn. Enter coordinates (e.g., B4): ";
+    }
 
     while (true) 
     {
-        std::cout << "Your turn. Enter coordinates (e.g., B4): \n";
         std::cin >> input;
         inputPair = InputParseHandler::parseCoordinates(input);
 
         if (inputPair.first != -1 && inputPair.second != -1) 
         {
+            if(game.getOpponentBoard()->wasAlreadyShot(inputPair.first, inputPair.second)){
+                std::cout<<"You already targeted that cell. Try again: ";
+                continue;
+            }
             break;
         }
 
-        std::cout << "Invalid input. Try Again.\n";
+        std::cout << "Invalid input. Try Again: ";
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 
-    game.getOpponentBoard() -> markHit(inputPair.first, inputPair.second);
+    game.incrementPlayerTurn();
+    
+    bool hit = game.getOpponentBoard() -> markHit(inputPair.first, inputPair.second);
+
+    if(hit){
+        game.incrementPlayerHit();
+    }
+    else{
+        game.incrementPlayerMiss();
+    }
 
     if(game.getOpponentBoard()->allShipsSunk()){
+        game.incrementPlayerHit();
+        game.incrementPlayerTurn();
         game.changeState(new WinState());
         return;
     }
-
+    
     CellState targetCellState = game.getOpponentBoard() -> getCellState(inputPair.first, inputPair.second);
 
     if(targetCellState == Hit)

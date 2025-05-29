@@ -58,13 +58,19 @@ void EnemyTurnState::update(Game& game)
             break;
     }
 
+    if(game.getPlayerBoard()->allShipsSunk())
+    {
+        game.changeState(new LoseState());
+        return;
+    }
+
     if(game.getPlayerBoard() -> getCellState(targetCell.first, targetCell.second) == Hit)
     {
         game.changeState(new EnemyTurnState());
     }
     else
     {
-       game.changeState(new PlayerTurnState());
+        game.changeState(new PlayerTurnState());
     }
 }
 
