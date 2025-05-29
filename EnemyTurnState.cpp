@@ -60,13 +60,18 @@ void EnemyTurnState::update(Game& game)
 
     std::cout << "Opponent targeted cell " << InputParseHandler::parseToString(targetCell.first, targetCell.second) << "\n";
 
-    if(game.getPlayerBoard() -> getCellState(targetCell.first, targetCell.second) == Hit)
-    {
+    if(game.getPlayerBoard()->allShipsSunk()){
+        game.changeState(new LoseState());
+        return;
+    }
+
+    CellState result = game.getPlayerBoard()->getCellState(targetCell.first, targetCell.second);
+
+    if(result == Hit){
         game.changeState(new EnemyTurnState());
     }
-    else
-    {
-       game.changeState(new PlayerTurnState());
+    else{
+        game.changeState(new PlayerTurnState());
     }
 }
 

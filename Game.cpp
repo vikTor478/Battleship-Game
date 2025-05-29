@@ -1,6 +1,24 @@
 #include "Game.h"
 #include "GameState.h"
 #include <iostream>
+#include <iomanip>
+
+Game& Game::operator++(){
+    incrementPlayerTurn();
+    return *this;
+}
+
+Game::operator bool() const{
+    return running;
+}
+
+std::ostream& operator<<(std::ostream& os, const Game& game) {
+    os <<"Turns taken: "<<game.getPlayerTurns()
+       <<"\nSuccessful hits: "<< game.getPlayerHits()
+       <<"\nMisses: "<<game.getPlayerMisses()
+       << "\nAccuracy: "<<std::fixed<<std::setprecision(2)<<game.getPlayerAccuracy()<<"%\n";
+    return os;
+}
 
 Game::Game() : shipCount(0), playerBoard(nullptr), opponentBoard(nullptr), currentState(nullptr), running(true) {}
 
@@ -78,4 +96,20 @@ Board* Game::getPlayerBoard()
 Board* Game::getOpponentBoard()
 {
     return opponentBoard;
+}
+
+void Game::incrementPlayerTurn(){playerTurns++;}
+void Game::incrementPlayerHit(){playerHits++;}
+void Game::incrementPlayerMiss(){playerMisses++;}
+
+int Game::getPlayerTurns() const{return playerTurns;}
+int Game::getPlayerHits() const{return playerHits;}
+int Game::getPlayerMisses() const{return playerMisses;}
+
+double Game::getPlayerAccuracy() const{
+    int totalShots = playerHits + playerMisses;
+
+    if(totalShots==0) return 0.0;
+
+    return (static_cast<double>(playerHits) / totalShots) * 100;
 }

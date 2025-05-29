@@ -25,26 +25,35 @@ void PlayerTurnState::update(Game& game)
 {
     std::string input;
     std::pair<int,int> inputPair = { 0, 0 };
-
+    std::cout << "Your turn. Enter coordinates (e.g., B4): ";
+   
     while (true) 
     {
-        std::cout << "Your turn. Enter coordinates (e.g., B4): \n";
         std::cin >> input;
         inputPair = InputParseHandler::parseCoordinates(input);
 
         if (inputPair.first != -1 && inputPair.second != -1) 
         {
+            CellState cell = game.getOpponentBoard()->getCellState(inputPair.first, inputPair.second);
+            if (cell == Hit || cell == Miss) 
+            {
+                std::cout << "You've already targeted that cell. Try again: ";
+                continue;
+            }
             break;
         }
 
-        std::cout << "Invalid input. Try Again.\n";
+        std::cout << "Invalid input. Try Again: ";
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 
+    game.incrementPlayerTurn();
+    
     game.getOpponentBoard() -> markHit(inputPair.first, inputPair.second);
 
     if(game.getOpponentBoard()->allShipsSunk()){
+        game.incrementPlayerHit();
         game.changeState(new WinState());
         return;
     }
@@ -53,11 +62,11 @@ void PlayerTurnState::update(Game& game)
 
     if(targetCellState == Hit)
     {
-        game.changeState(new EnemyTurnState());
+        game.incrementPlayerHit();
     }
     else
     {
-       game.changeState(new PlayerTurnState());
+       game.incrementPlayerMiss();
     }
 
     game.changeState(new EnemyTurnState());

@@ -3,7 +3,7 @@
 #include "Renderer.h"
 
 void LoseState::enter(Game& game){
-    Renderer::ShowEndScreen(false);
+    Renderer::ShowEndScreen(false, game);
     game.quit();
 }
 

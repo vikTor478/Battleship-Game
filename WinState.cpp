@@ -3,7 +3,7 @@
 #include "Renderer.h"
 
 void WinState::enter(Game& game){
-    Renderer::ShowEndScreen(true);
+    Renderer::ShowEndScreen(true, game);
     game.quit();
 }
 
