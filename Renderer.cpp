@@ -48,7 +48,7 @@ void Renderer::Draw(const Board& playerBoard, const Board& opponentBoard, int sh
 
         for (int y = 0; y < 10; ++y) 
         {
-            CellState state = playerBoard.getCellState(x - 1, y);;
+            CellState state = playerBoard.getCellState(x - 1, y);
             char symbol = '~';
             if (state == Ship) symbol = 'S';
             else if (state == Hit) symbol = 'X';
@@ -70,8 +70,7 @@ void Renderer::Draw(const Board& playerBoard, const Board& opponentBoard, int sh
         {
             CellState state = opponentBoard.getCellState(x - 1, y);;
             char symbol = '~';
-            if (state == Ship) symbol = 'S';
-            else if (state == Hit) symbol = 'X';
+            if (state == Hit) symbol = 'X';
             else if (state == Miss) symbol = 'o';
 
             std::cout << " " << symbol;
