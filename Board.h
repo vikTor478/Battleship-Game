@@ -2,6 +2,8 @@
 #define BOARD_H
 
 #include "ShipData.h"
+#include <iostream>
+#include <string>
 #include <vector>
 
 enum CellState 
@@ -21,6 +23,7 @@ public:
     bool markHit(int x, int y);
     void placeShip(int x, int y, int length, bool horizontal);
     CellState getCellState(int x, int y) const;
+    std::string getSymbolAt(int x, int y) const;
     bool wasAlreadyShot(int x, int y) const;
 
     const std::vector<ShipData>& getShips() const;

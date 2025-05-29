@@ -53,14 +53,12 @@ void PlayerTurnState::update(Game& game)
 
     if(targetCellState == Hit)
     {
-        game.changeState(new EnemyTurnState());
+        game.changeState(new PlayerTurnState());
     }
     else
     {
-       game.changeState(new PlayerTurnState());
+       game.changeState(new EnemyTurnState());
     }
-
-    game.changeState(new EnemyTurnState());
 }
 
 void PlayerTurnState::exit(Game& game)

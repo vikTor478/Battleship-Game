@@ -3,6 +3,7 @@
 #include <iostream>
 
 Game::Game() : shipCount(0), playerBoard(nullptr), opponentBoard(nullptr), currentState(nullptr), running(true) {}
+std::vector<std::pair<int, int>> Game::targetQueue;
 
 Game::~Game()
 {

@@ -32,6 +32,7 @@ public:
 
     void setShipCount(int count);
     int getShipCount() const;
+    static std::vector<std::pair<int, int>> targetQueue;
 
 private:
     DifficultyLevel difficultyLevel;

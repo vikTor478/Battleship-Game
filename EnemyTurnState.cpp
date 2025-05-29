@@ -41,6 +41,8 @@ void EnemyTurnState::update(Game& game)
 {
     std::pair<int, int> targetCell;
 
+    showThinkingAnimation();
+
     switch (game.getDifficultyLevel()) 
     {
         case DifficultyLevel::Easy:
@@ -56,10 +58,6 @@ void EnemyTurnState::update(Game& game)
             break;
     }
 
-    showThinkingAnimation();
-
-    std::cout << "Opponent targeted cell " << InputParseHandler::parseToString(targetCell.first, targetCell.second) << "\n";
-
     if(game.getPlayerBoard() -> getCellState(targetCell.first, targetCell.second) == Hit)
     {
         game.changeState(new EnemyTurnState());
@@ -73,6 +71,7 @@ void EnemyTurnState::update(Game& game)
 void EnemyTurnState::exit(Game& game)
 {
     std::cout << "--- Enemy turn ended ---\n";
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
 
 std::pair<int, int> EnemyTurnState::performEasyAI(Game& game) 
@@ -95,12 +94,12 @@ std::pair<int, int> EnemyTurnState::performMediumAI(Game& game)
 {
     Board* playerBoard = game.getPlayerBoard();
 
-    if (!targetQueue.empty()) 
+    if (!Game::targetQueue.empty()) 
     {
-        auto [x, y] = targetQueue.back();
-        targetQueue.pop_back();
+        auto [x, y] = Game::targetQueue.back();
+        Game::targetQueue.pop_back();
 
-        if (!playerBoard->wasAlreadyShot(x, y)) 
+        if (!playerBoard -> wasAlreadyShot(x, y)) 
         {
             bool hit = playerBoard->markHit(x, y);
             if (hit) 
@@ -110,6 +109,7 @@ std::pair<int, int> EnemyTurnState::performMediumAI(Game& game)
             return { x, y };
         }
     }
+
 
     int x, y;
     do 
@@ -131,10 +131,10 @@ std::pair<int, int> EnemyTurnState::performHardAI(Game& game)
 {
     Board* playerBoard = game.getPlayerBoard();
 
-    if (!targetQueue.empty()) 
+    if (!Game::targetQueue.empty()) 
     {
-        auto [x, y] = targetQueue.back();
-        targetQueue.pop_back();
+        auto [x, y] = Game::targetQueue.back();
+        Game::targetQueue.pop_back();
 
         if (!playerBoard -> wasAlreadyShot(x, y)) 
         {
@@ -152,7 +152,8 @@ std::pair<int, int> EnemyTurnState::performHardAI(Game& game)
     {
         x = rand() % 10;
         y = rand() % 10;
-    } while ((x + y) % 2 != 0 || playerBoard -> wasAlreadyShot(x, y));
+    } 
+    while ((x + y) % 2 != 0 || playerBoard -> wasAlreadyShot(x, y));
 
     bool hit = playerBoard -> markHit(x, y);
     if (hit) 
@@ -164,8 +165,8 @@ std::pair<int, int> EnemyTurnState::performHardAI(Game& game)
 
 void EnemyTurnState::enqueueAdjacentTargets(int x, int y, Board* board) 
 {
-    if (x > 0 && !board->wasAlreadyShot(x - 1, y)) targetQueue.emplace_back(x - 1, y);
-    if (x < 9 && !board->wasAlreadyShot(x + 1, y)) targetQueue.emplace_back(x + 1, y);
-    if (y > 0 && !board->wasAlreadyShot(x, y - 1)) targetQueue.emplace_back(x, y - 1);
-    if (y < 9 && !board->wasAlreadyShot(x, y + 1)) targetQueue.emplace_back(x, y + 1);
+    if (x > 0 && !board -> wasAlreadyShot(x - 1, y)) Game::targetQueue.emplace_back(x - 1, y);
+    if (x < 9 && !board -> wasAlreadyShot(x + 1, y)) Game::targetQueue.emplace_back(x + 1, y);
+    if (y > 0 && !board -> wasAlreadyShot(x, y - 1)) Game::targetQueue.emplace_back(x, y - 1);
+    if (y < 9 && !board -> wasAlreadyShot(x, y + 1)) Game::targetQueue.emplace_back(x, y + 1);
 }

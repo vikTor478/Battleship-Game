@@ -18,8 +18,6 @@ public:
     std::pair<int, int> performHardAI(Game& game);
     
     void enqueueAdjacentTargets(int x, int y, Board* board);
-
-    std::vector<std::pair<int, int>> targetQueue;
 };
 
 #endif

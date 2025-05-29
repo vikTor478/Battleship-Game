@@ -2,7 +2,8 @@
 #include "Game.h"
 #include "Renderer.h"
 
-void WinState::enter(Game& game){
+void WinState::enter(Game& game)
+{
     Renderer::ShowEndScreen(true);
     game.quit();
 }

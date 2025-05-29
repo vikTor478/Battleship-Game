@@ -20,7 +20,6 @@ std::pair<int, int> InputParseHandler::parseCoordinates(const std::string& input
         return { -1, -1 };
     }
     
-<<<<<<< HEAD
     return { x, y };
 }
 
@@ -35,8 +34,4 @@ std::string InputParseHandler::parseToString(int x, int y)
     int row = y + 1;
 
     return std::string(1, column) + std::to_string(row);
-=======
-    std::cout<< x << y << "3\n";
-    return { y, x };
->>>>>>> sofia
 }

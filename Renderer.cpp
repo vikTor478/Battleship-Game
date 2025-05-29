@@ -6,7 +6,8 @@ void Renderer::Draw(const Board& playerBoard, const Board& opponentBoard, int sh
 {
     system("cls");
 
-    if(shipCount != -1){
+    if(shipCount != -1)
+    {
         std::cout<<"You and your opponent both have "<<shipCount;
         if(shipCount == 1) std::cout<<" ship ";
         else std::cout<<" ships ";
@@ -33,20 +34,20 @@ void Renderer::Draw(const Board& playerBoard, const Board& opponentBoard, int sh
 
     std::cout << std::endl;
 
-    for (int x = 1; x <= 10; ++x) 
+    for (int y = 1; y <= 10; ++y) 
     {
-        if (x < 10)
+        if (y < 10)
         {
-            std::cout << " " << x;
+            std::cout << " " << y;
         }
         else
         {
-            std::cout << x;
+            std::cout << y;
         }
 
-        for (int y = 0; y < 10; ++y) 
+        for (int x = 0; x < 10; ++x) 
         {
-            CellState state = playerBoard.getCellState(x - 1, y);;
+            CellState state = playerBoard.getCellState(x, y - 1);;
             char symbol = '~';
             if (state == Ship) symbol = 'S';
             else if (state == Hit) symbol = 'X';
@@ -56,17 +57,17 @@ void Renderer::Draw(const Board& playerBoard, const Board& opponentBoard, int sh
         }
 
         std::cout << "        ";
-        if (x < 10)
+        if (y < 10)
         {
-            std::cout << " " << x;
+            std::cout << " " << y;
         }
         else
         {
-            std::cout << x;
+            std::cout << y;
         }
-        for (int y = 0; y < 10; ++y) 
+        for (int x = 0; x < 10; ++x) 
         {
-            CellState state = opponentBoard.getCellState(x - 1, y);;
+            CellState state = opponentBoard.getCellState(x, y - 1);;
             char symbol = '~';
             if (state == Ship) symbol = 'S';
             else if (state == Hit) symbol = 'X';

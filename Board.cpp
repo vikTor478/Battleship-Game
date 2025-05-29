@@ -1,5 +1,7 @@
 #include "Board.h"
 #include <iostream>
+#include <string>
+#include "InputParseHandler.h"
 
 Board::Board() 
 {
@@ -53,22 +55,27 @@ void Board::placeShip(int x, int y, int length, bool horizontal)
 
 bool Board::markHit(int x, int y) 
 {
+    std::cout << "Opponent targeted cell " << InputParseHandler::parseToString(x, y) << "\n";
+
     if (grid[x][y] == Ship)
     {
         grid[x][y] = Hit;
 
-        for(ShipData& ship : ships){
-            if(!ship.isSunk()){
+        for(ShipData& ship : ships)
+        {
+            if(!ship.isSunk())
+            {
                 ship.hits++;
                 break;
             }
         }
+        std::cout << "HIT at " << InputParseHandler::parseToString(x, y) << "\n";
         return true;
-
     }    
     else
     {
         grid[x][y] = Miss;
+        std::cout << "MISS at " << InputParseHandler::parseToString(x, y) << "\n";
         return false;
     }
 }
@@ -83,6 +90,27 @@ bool Board::allShipsSunk() const{
 CellState Board::getCellState(int x, int y) const 
 {
     return grid[x][y];
+}
+
+std::string Board::getSymbolAt(int x, int y) const 
+{
+    switch(getCellState(x, y))
+    {
+        case Empty:
+            return "~";
+
+        case Miss:
+            return "o";
+
+        case Ship:
+            return "S";
+        
+        case Hit:
+            return "X";
+
+        default:
+            return " ";
+    }
 }
 
 bool Board::wasAlreadyShot(int x, int y) const
