@@ -10,6 +10,8 @@
 
 void PlayerTurnState::enter(Game& game)
 {
+    isExtraTurn = false;
+
     if (game.getPlayerBoard() && game.getOpponentBoard()) 
     {
         Renderer::Draw(*game.getPlayerBoard(), *game.getOpponentBoard(), game.getShipCount());
@@ -25,8 +27,11 @@ void PlayerTurnState::update(Game& game)
 {
     std::string input;
     std::pair<int,int> inputPair = { 0, 0 };
-    std::cout << "Your turn. Enter coordinates (e.g., B4): ";
    
+    if(!isExtraTurn){
+            std::cout<<"Your turn. Enter coordinates (e.g., B4): ";
+    }
+
     while (true) 
     {
         std::cin >> input;
@@ -34,10 +39,8 @@ void PlayerTurnState::update(Game& game)
 
         if (inputPair.first != -1 && inputPair.second != -1) 
         {
-            CellState cell = game.getOpponentBoard()->getCellState(inputPair.first, inputPair.second);
-            if (cell == Hit || cell == Miss) 
-            {
-                std::cout << "You've already targeted that cell. Try again: ";
+            if(game.getOpponentBoard()->wasAlreadyShot(inputPair.first, inputPair.second)){
+                std::cout<<"You already targeted that cell. Try again: ";
                 continue;
             }
             break;
@@ -50,23 +53,28 @@ void PlayerTurnState::update(Game& game)
 
     game.incrementPlayerTurn();
     
-    game.getOpponentBoard() -> markHit(inputPair.first, inputPair.second);
+    bool hit = game.getOpponentBoard() -> markHit(inputPair.first, inputPair.second);
+
+    if(hit){
+        game.incrementPlayerHit();
+    }
+    else{
+        game.incrementPlayerMiss();
+    }
 
     if(game.getOpponentBoard()->allShipsSunk()){
         game.incrementPlayerHit();
+        game.incrementPlayerTurn();
         game.changeState(new WinState());
         return;
     }
 
-    CellState targetCellState = game.getOpponentBoard() -> getCellState(inputPair.first, inputPair.second);
-
-    if(targetCellState == Hit)
-    {
-        game.incrementPlayerHit();
-    }
-    else
-    {
-       game.incrementPlayerMiss();
+    if(hit){
+        Renderer::Draw(*game.getPlayerBoard(), *game.getOpponentBoard(), game.getShipCount());
+        std::cout << "=== Player turn started ===\n";
+        std::cout<<"You hit a target! You get an extra turn! Enter coordinates: ";
+        isExtraTurn = true;
+        return;
     }
 
     game.changeState(new EnemyTurnState());
