@@ -13,7 +13,7 @@ public:
 
 void showSettings(Game& game);
 void selectDifficulty(Game& game);
-void selectBoardSize();
+void selectBoardSize(Game& game);
 void selectGameMode();
 void showRules();
 

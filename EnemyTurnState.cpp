@@ -7,6 +7,7 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <algorithm>
 
 
 void showThinkingAnimation() 
@@ -28,8 +29,8 @@ void EnemyTurnState::enter(Game& game)
 {
     if (game.getPlayerBoard() && game.getOpponentBoard()) 
     {
-        Renderer::Draw(*game.getPlayerBoard(), *game.getOpponentBoard(), game.getShipCount());
-        std::cout << "--- Enemy Turn Started ---\n";
+        Renderer::Draw(*game.getPlayerBoard(), *game.getOpponentBoard(), game.getShipCount(), game.getBoardSize());
+        std::cout << "\n\n--- Enemy Turn Started ---\n";
     } 
     else 
     {
@@ -76,8 +77,8 @@ void EnemyTurnState::update(Game& game)
 
 void EnemyTurnState::exit(Game& game)
 {
-    std::cout << "--- Enemy turn ended ---\n";
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::cout << "\n--- Enemy turn ended ---\n";
+    system("pause");
 }
 
 std::pair<int, int> EnemyTurnState::performEasyAI(Game& game) 
@@ -92,7 +93,7 @@ std::pair<int, int> EnemyTurnState::performEasyAI(Game& game)
     } 
     while (playerBoard->wasAlreadyShot(x, y));
 
-    playerBoard -> markHit(x, y);
+    playerBoard -> markHit(x, y, game);
     return { x, y };
 }
 
@@ -100,22 +101,37 @@ std::pair<int, int> EnemyTurnState::performMediumAI(Game& game)
 {
     Board* playerBoard = game.getPlayerBoard();
 
-    if (!Game::targetQueue.empty()) 
+    while (!game.targetQueue.empty()) 
     {
-        auto [x, y] = Game::targetQueue.back();
-        Game::targetQueue.pop_back();
+        auto [x, y] = game.targetQueue.back();
+        game.targetQueue.pop_back();
 
-        if (!playerBoard -> wasAlreadyShot(x, y)) 
+        if (!playerBoard->wasAlreadyShot(x, y)) 
         {
-            bool hit = playerBoard->markHit(x, y);
+            bool hit = playerBoard->markHit(x, y, game);
+
             if (hit) 
             {
-                enqueueAdjacentTargets(x, y, playerBoard);
+                game.currentHits.emplace_back(x, y);
+
+                if (game.currentHits.size() >= 2 && game.orientation == "none") 
+                {
+                    if (game.currentHits[0].first == game.currentHits[1].first)
+                    {
+                        game.orientation = "horizontal";
+                    }
+                    else if (game.currentHits[0].second == game.currentHits[1].second)
+                    {
+                        game.orientation = "vertical";
+                    }
+                }
+
+                enqueueNextTarget(x, y, playerBoard, game);
             }
+
             return { x, y };
         }
     }
-
 
     int x, y;
     do 
@@ -125,11 +141,26 @@ std::pair<int, int> EnemyTurnState::performMediumAI(Game& game)
     } 
     while (playerBoard -> wasAlreadyShot(x, y));
 
-    bool hit = playerBoard -> markHit(x, y);
+    bool hit = playerBoard -> markHit(x, y, game);
     if (hit) 
     {
-        enqueueAdjacentTargets(x, y, playerBoard);
+        game.currentHits.emplace_back(x, y);
+        enqueueAdjacentTargets(x, y, playerBoard, game);
     }
+
+    for (const ShipData& ship : playerBoard -> getShips())
+    {
+        if(ship.contains(x, y))
+        {
+            if(ship.isSunk())
+            {
+                game.currentHits.clear();
+                game.orientation = "none";
+                game.targetQueue.clear();
+            }
+        }
+    }
+
     return { x, y };
 }
 
@@ -137,18 +168,34 @@ std::pair<int, int> EnemyTurnState::performHardAI(Game& game)
 {
     Board* playerBoard = game.getPlayerBoard();
 
-    if (!Game::targetQueue.empty()) 
+    while (!game.targetQueue.empty()) 
     {
-        auto [x, y] = Game::targetQueue.back();
-        Game::targetQueue.pop_back();
+        auto [x, y] = game.targetQueue.back();
+        game.targetQueue.pop_back();
 
-        if (!playerBoard -> wasAlreadyShot(x, y)) 
+        if (!playerBoard->wasAlreadyShot(x, y)) 
         {
-            bool hit = playerBoard -> markHit(x, y);
+            bool hit = playerBoard->markHit(x, y, game);
+
             if (hit) 
             {
-                enqueueAdjacentTargets(x, y, playerBoard);
+                game.currentHits.emplace_back(x, y);
+
+                if (game.currentHits.size() >= 2 && game.orientation == "none") 
+                {
+                    if (game.currentHits[0].first == game.currentHits[1].first)
+                    {
+                        game.orientation = "horizontal";
+                    }
+                    else if (game.currentHits[0].second == game.currentHits[1].second)
+                    {
+                        game.orientation = "vertical";
+                    }
+                }
+
+                enqueueNextTarget(x, y, playerBoard, game);
             }
+
             return { x, y };
         }
     }
@@ -161,18 +208,58 @@ std::pair<int, int> EnemyTurnState::performHardAI(Game& game)
     } 
     while ((x + y) % 2 != 0 || playerBoard -> wasAlreadyShot(x, y));
 
-    bool hit = playerBoard -> markHit(x, y);
+    bool hit = playerBoard -> markHit(x, y, game);
     if (hit) 
     {
-        enqueueAdjacentTargets(x, y, playerBoard);
+        enqueueAdjacentTargets(x, y, playerBoard, game);
     }
     return { x, y };
 }
 
-void EnemyTurnState::enqueueAdjacentTargets(int x, int y, Board* board) 
+void EnemyTurnState::enqueueAdjacentTargets(int x, int y, Board* board, Game& game) 
 {
-    if (x > 0 && !board -> wasAlreadyShot(x - 1, y)) Game::targetQueue.emplace_back(x - 1, y);
-    if (x < 9 && !board -> wasAlreadyShot(x + 1, y)) Game::targetQueue.emplace_back(x + 1, y);
-    if (y > 0 && !board -> wasAlreadyShot(x, y - 1)) Game::targetQueue.emplace_back(x, y - 1);
-    if (y < 9 && !board -> wasAlreadyShot(x, y + 1)) Game::targetQueue.emplace_back(x, y + 1);
+    if (x > 0 && !board -> wasAlreadyShot(x - 1, y)) game.targetQueue.emplace_back(x - 1, y);
+    if (x < 9 && !board -> wasAlreadyShot(x + 1, y)) game.targetQueue.emplace_back(x + 1, y);
+    if (y > 0 && !board -> wasAlreadyShot(x, y - 1)) game.targetQueue.emplace_back(x, y - 1);
+    if (y < 9 && !board -> wasAlreadyShot(x, y + 1)) game.targetQueue.emplace_back(x, y + 1);
+}
+
+void EnemyTurnState::enqueueNextTarget(int x, int y, Board* board, Game& game) 
+{
+    std::sort(game.currentHits.begin(), game.currentHits.end());
+
+    if (game.orientation == "horizontal") 
+    {
+        int minX = game.currentHits.front().first;
+        int yVal = game.currentHits.front().second;
+        int maxX = game.currentHits.back().first;
+
+        if (minX - 1 >= 0 && !board->wasAlreadyShot(minX - 1, yVal))
+        {
+            game.targetQueue.push_back({ minX - 1, yVal });
+        }
+        if (maxX + 1 < 10 && !board->wasAlreadyShot(maxX + 1, yVal))
+        {
+            game.targetQueue.push_back({ maxX + 1, yVal });
+        }
+    }
+    else if (game.orientation == "vertical") 
+    {
+        int xVal = game.currentHits.front().first;
+        int minY = game.currentHits.front().second;
+        int maxY = game.currentHits.back().second;
+
+        if (minY - 1 >= 0 && !board->wasAlreadyShot(xVal, minY - 1))
+        {
+            game.targetQueue.push_back({ xVal, minY - 1 });
+        }
+        if (maxY + 1 < 10 && !board->wasAlreadyShot(xVal, maxY + 1))
+        {
+            game.targetQueue.push_back({ xVal, maxY + 1 });
+        }
+    }
+    else
+    {
+        enqueueAdjacentTargets(x, y, board, game);
+    }
 }

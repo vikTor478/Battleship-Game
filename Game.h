@@ -23,17 +23,21 @@ public:
     void changeState(GameState* newState);
     void quit();
 
+    void setBoardSize(int size);
     void setDifficultyLevel(DifficultyLevel difficultyLevel);
     void setPlayerBoard(Board* playerBoard);
     void setOpponentBoard(Board* opponentBoard);
 
+    int getBoardSize();
     DifficultyLevel getDifficultyLevel() const;
     Board* getPlayerBoard();
     Board* getOpponentBoard();
 
     void setShipCount(int count);
     int getShipCount() const;
-    static std::vector<std::pair<int, int>> targetQueue;
+    std::vector<std::pair<int, int>> targetQueue;
+    std::vector<std::pair<int, int>> currentHits;  
+    std::string orientation;
 
     void incrementPlayerTurn();
     void incrementPlayerHit();
@@ -53,6 +57,7 @@ public:
 private:
     DifficultyLevel difficultyLevel;
     int shipCount;
+    int boardSize;
     GameState* currentState;
     Board* playerBoard;
     Board* opponentBoard;

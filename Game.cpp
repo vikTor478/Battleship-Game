@@ -21,7 +21,6 @@ std::ostream& operator<<(std::ostream& os, const Game& game) {
 }
 
 Game::Game() : shipCount(0), playerBoard(nullptr), opponentBoard(nullptr), currentState(nullptr), running(true) {}
-std::vector<std::pair<int, int>> Game::targetQueue;
 
 Game::~Game()
 {
@@ -41,6 +40,11 @@ void Game::setShipCount(int count){
 
 int Game::getShipCount() const{
     return shipCount;
+}
+
+int Game::getBoardSize()
+{
+    return boardSize;
 }
 
 void Game::changeState(GameState* newState)
@@ -82,6 +86,11 @@ void Game::setOpponentBoard(Board* board)
 {
     if(opponentBoard) { delete opponentBoard; }
     opponentBoard = board;
+}
+
+void Game::setBoardSize(int size)
+{
+    boardSize = size;
 }
 
 DifficultyLevel Game::getDifficultyLevel() const

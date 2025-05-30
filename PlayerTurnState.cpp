@@ -7,6 +7,8 @@
 #include <utility>
 #include <iostream>
 #include <limits>
+#include <chrono>
+#include <thread>
 
 void PlayerTurnState::enter(Game& game)
 {
@@ -14,10 +16,10 @@ void PlayerTurnState::enter(Game& game)
 
     if (game.getPlayerBoard() && game.getOpponentBoard()) 
     {
-        Renderer::Draw(*game.getPlayerBoard(), *game.getOpponentBoard(), game.getShipCount());
-        std::cout << "=== Player turn started ===\n";
+        Renderer::Draw(*game.getPlayerBoard(), *game.getOpponentBoard(), game.getShipCount(), game.getBoardSize());
+        std::cout << "\n\n=== Player turn started ===";
     } 
-    else 
+    else
     {
         std::cerr << "Error: boards are bot initialized\n";
     }
@@ -25,17 +27,14 @@ void PlayerTurnState::enter(Game& game)
 
 void PlayerTurnState::update(Game& game)
 {
+    std::cout<<"Your turn. Enter coordinates: ";
     std::string input;
     std::pair<int,int> inputPair = { 0, 0 };
-   
-    if(!isExtraTurn){
-            std::cout<<"Your turn. Enter coordinates (e.g., B4): ";
-    }
 
     while (true) 
     {
         std::cin >> input;
-        inputPair = InputParseHandler::parseCoordinates(input);
+        inputPair = InputParseHandler::parseCoordinates(input, game.getBoardSize());
 
         if (inputPair.first != -1 && inputPair.second != -1) 
         {
@@ -53,14 +52,8 @@ void PlayerTurnState::update(Game& game)
 
     game.incrementPlayerTurn();
     
-    bool hit = game.getOpponentBoard() -> markHit(inputPair.first, inputPair.second);
+    game.getOpponentBoard() -> markHit(inputPair.first, inputPair.second, game);
 
-    if(hit){
-        game.incrementPlayerHit();
-    }
-    else{
-        game.incrementPlayerMiss();
-    }
 
     if(game.getOpponentBoard()->allShipsSunk()){
         game.incrementPlayerHit();
@@ -68,20 +61,23 @@ void PlayerTurnState::update(Game& game)
         game.changeState(new WinState());
         return;
     }
-    
+
     CellState targetCellState = game.getOpponentBoard() -> getCellState(inputPair.first, inputPair.second);
 
     if(targetCellState == Hit)
     {
+        game.incrementPlayerHit();
         game.changeState(new PlayerTurnState());
     }
     else
     {
+        game.incrementPlayerMiss();
        game.changeState(new EnemyTurnState());
     }
 }
 
 void PlayerTurnState::exit(Game& game)
 {
-    std::cout << "=== Player turn ended ===\n";
+    std::cout << "\n=== Player turn ended ===\n";
+    system("pause");
 }

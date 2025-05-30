@@ -17,7 +17,8 @@ public:
     std::pair<int, int> performMediumAI(Game& game);
     std::pair<int, int> performHardAI(Game& game);
     
-    void enqueueAdjacentTargets(int x, int y, Board* board);
+    void enqueueAdjacentTargets(int x, int y, Board* board, Game& game);
+    void enqueueNextTarget(int x, int y, Board* board, Game& game);
 };
 
 #endif

@@ -4,6 +4,8 @@
 #include "Board.h"
 #include "Renderer.h"
 #include <iostream>
+#include <limits>
+
 #include <cstdlib>
 #include <ctime>
 
@@ -28,6 +30,16 @@ void MainMenuState::update(Game& game)
         std::cout << "4. Exit\n";
         std::cout << "Choose an option: ";
         std::cin >> choice;
+
+        if (std::cin.fail()) 
+        {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input. Please enter a number between 1 and 4.\n";
+            system("pause");
+            continue;
+        }
+
         system("cls");
 
         switch (choice) 
@@ -49,11 +61,9 @@ void MainMenuState::update(Game& game)
                 std::exit(0);
 
             default:
-                std::cout << "Invalid input. Try again.\n";
+                std::cout << "Invalid input. Please enter a number between 1 and 4.\n";
         }
     }
-
-    
 }
 
 void showSettings(Game& game) 
@@ -65,8 +75,8 @@ void showSettings(Game& game)
         system("cls");
         std::cout << "\n--- Settings ---\n";
         std::cout << "1. Select Difficulty\n";
-        std::cout << "2. Select Game Mode\n";
-        std::cout << "3. Set Grid Size\n";
+        std::cout << "2. Set Grid Size\n";
+        std::cout << "3. Select Game Mode\n";
         std::cout << "4. Main Menu\n";
         std::cout << "Choose an option: ";
         std::cin >> choice;
@@ -78,7 +88,7 @@ void showSettings(Game& game)
                 break;
 
             case 2:
-                selectBoardSize();
+                selectBoardSize(game);
                 break;
 
             case 3:
@@ -111,16 +121,31 @@ void selectDifficulty(Game& game)
     } 
     else 
     {
-        std::cout << "\nInvalid choice. Returning to main menu.\n";
+        std::cout << "\nInvalid choice. Please enter a number between 1 and 3.\n";
     }
 
     std::cout << "Press Enter to return...";
     std::cin.ignore(); std::cin.get();
 }
 
-void selectBoardSize()
+void selectBoardSize(Game& game)
 {
+    int size;
+    std::cout << "\n\nEnter prefered board size (min 5, max 26): \n";
+    std::cin >> size;
 
+    if (size >= 5 && size <= 26) 
+    {
+        game.setBoardSize(size);
+        std::cout << "\nsize set successfully.\n";
+    } 
+    else 
+    {
+        std::cout << "\nInvalid choice. Please enter a number between 5 and 26.\n";
+    }
+
+    std::cout << "Press Enter to return...";
+    std::cin.ignore(); std::cin.get();
 }
 
 void selectGameMode()
@@ -149,8 +174,22 @@ void showRules()
 
 void MainMenuState::exit(Game& game)
 {
-    Board* playerBoard = new Board();
-    Board* opponentBoard = new Board();
+    std::cout<< game.getBoardSize();
+    int boardSize = game.getBoardSize();
+    Board* playerBoard;
+    Board* opponentBoard;
+    
+    if(boardSize > 5)
+    {
+        playerBoard = new Board(boardSize);
+        opponentBoard = new Board(boardSize);
+    }
+    else
+    {
+        playerBoard = new Board();
+        opponentBoard = new Board();
+        game.setBoardSize(10);
+    }
 
     game.setPlayerBoard(playerBoard);
     game.setOpponentBoard(opponentBoard);
@@ -164,6 +203,6 @@ void MainMenuState::exit(Game& game)
         shipLengths.push_back(length);
     }
 
-    playerBoard->placeGameShips(shipLengths);
-    opponentBoard->placeGameShips(shipLengths);
+    playerBoard->placeGameShips(shipLengths, game.getBoardSize());
+    opponentBoard->placeGameShips(shipLengths, game.getBoardSize());
 }
