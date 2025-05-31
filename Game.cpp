@@ -55,9 +55,9 @@ void Game::changeState(GameState* newState)
 
 void Game::run()
 {
-    while (running && currentState)
+    while (*this && currentState)
     {
-        currentState -> update(*this);
+        currentState->update(*this);
     }
 }
 

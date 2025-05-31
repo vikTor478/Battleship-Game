@@ -51,7 +51,7 @@ void PlayerTurnState::update(Game& game)
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 
-    game.incrementPlayerTurn();
+    ++game;
     
     bool hit = game.getOpponentBoard() -> markHit(inputPair.first, inputPair.second);
 
@@ -64,7 +64,7 @@ void PlayerTurnState::update(Game& game)
 
     if(game.getOpponentBoard()->allShipsSunk()){
         game.incrementPlayerHit();
-        game.incrementPlayerTurn();
+        ++game;
         game.changeState(new WinState());
         return;
     }
