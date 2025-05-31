@@ -92,7 +92,7 @@ void showSettings(Game& game)
                 break;
 
             case 3:
-                selectGameMode();
+                selectGameMode(game);
                 break;
 
             case 4:
@@ -131,26 +131,44 @@ void selectDifficulty(Game& game)
 void selectBoardSize(Game& game)
 {
     int size;
-    std::cout << "\n\nEnter prefered board size (min 5, max 26): \n";
+    std::cout << "\n\nEnter prefered board size (min 10, max 26): \n";
     std::cin >> size;
 
-    if (size >= 5 && size <= 26) 
+    if (size >= 10 && size <= 26)
     {
         game.setBoardSize(size);
         std::cout << "\nsize set successfully.\n";
     } 
     else 
     {
-        std::cout << "\nInvalid choice. Please enter a number between 5 and 26.\n";
+        std::cout << "\nInvalid choice. Please enter a number between 10 and 26.\n";
     }
 
     std::cout << "Press Enter to return...";
     std::cin.ignore(); std::cin.get();
 }
 
-void selectGameMode()
+void selectGameMode(Game& game)
 {
+    int mode;
+    std::cout << "\nSelect difficulty:\n";
+    std::cout << "1. Standart\n";
+    std::cout << "2. Random Ships\n";
+    std::cout << "Enter your choice: ";
+    std::cin >> mode;
     
+    if (mode >= 1 && mode <= 2) 
+    {
+        game.setGameMode(static_cast<GameMode>(mode - 1));
+        std::cout << "\nGame Mode set successfully.\n";
+    } 
+    else 
+    {
+        std::cout << "\nInvalid choice. Please enter a number between 1 and 2.\n";
+    }
+
+    std::cout << "Press Enter to return...";
+    std::cin.ignore(); std::cin.get();
 }
 
 void showRules() 
@@ -174,12 +192,12 @@ void showRules()
 
 void MainMenuState::exit(Game& game)
 {
-    std::cout<< game.getBoardSize();
     int boardSize = game.getBoardSize();
+    std::cout<< boardSize;
     Board* playerBoard;
     Board* opponentBoard;
     
-    if(boardSize > 5)
+    if(boardSize >= 5)
     {
         playerBoard = new Board(boardSize);
         opponentBoard = new Board(boardSize);
@@ -194,14 +212,33 @@ void MainMenuState::exit(Game& game)
     game.setPlayerBoard(playerBoard);
     game.setOpponentBoard(opponentBoard);
 
-    int shipCount = std::rand() % 4 + 1;
-    game.setShipCount(shipCount);
-    
     std::vector<int> shipLengths;
-    for(int i=0; i<shipCount; ++i){
-        int length = std::rand() % 4 + 2;
-        shipLengths.push_back(length);
+
+    switch(game.getGameMode())
+    {
+        case Standart:
+            shipLengths;
+            game.setShipCount(5);
+            shipLengths.push_back(2);
+            shipLengths.push_back(3);
+            shipLengths.push_back(3);
+            shipLengths.push_back(4);
+            shipLengths.push_back(5);
+            break;
+        
+        case RandomShips:
+            int shipCount = std::rand() % 4 + 1;
+            game.setShipCount(shipCount);
+            
+            shipLengths;
+            for(int i=0; i<shipCount; ++i){
+                int length = std::rand() % 4 + 2;
+                shipLengths.push_back(length);
+            }
+            break;
     }
+
+    
 
     playerBoard->placeGameShips(shipLengths, game.getBoardSize());
     opponentBoard->placeGameShips(shipLengths, game.getBoardSize());

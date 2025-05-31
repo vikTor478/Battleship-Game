@@ -14,7 +14,7 @@ public:
 void showSettings(Game& game);
 void selectDifficulty(Game& game);
 void selectBoardSize(Game& game);
-void selectGameMode();
+void selectGameMode(Game& game);
 void showRules();
 
 #endif

@@ -1,6 +1,6 @@
 #include "EnemyTurnState.h"
+#include "MainMenuState.h"
 #include "PlayerTurnState.h"
-#include "LoseState.h"
 #include "Renderer.h"
 #include "Game.h"
 #include "InputParseHandler.h"
@@ -61,12 +61,15 @@ void EnemyTurnState::update(Game& game)
 
     if(game.getPlayerBoard()->allShipsSunk())
     {
-        game.changeState(new LoseState());
+        Renderer::ShowEndScreen(false, game);
+        game.changeState(new MainMenuState());
+        //game.changeState(new LoseState());
         return;
     }
 
     if(game.getPlayerBoard() -> getCellState(targetCell.first, targetCell.second) == Hit)
     {
+        std::cout << "\nThe opponent hit your ship. They shoot again...\n";
         game.changeState(new EnemyTurnState());
     }
     else
@@ -77,8 +80,11 @@ void EnemyTurnState::update(Game& game)
 
 void EnemyTurnState::exit(Game& game)
 {
-    std::cout << "\n--- Enemy turn ended ---\n";
-    system("pause");
+    if(!game.getPlayerBoard() -> allShipsSunk())
+    {
+        std::cout << "\n--- Enemy turn ended ---\n";
+        system("pause");
+    }
 }
 
 std::pair<int, int> EnemyTurnState::performEasyAI(Game& game) 
@@ -110,6 +116,17 @@ std::pair<int, int> EnemyTurnState::performMediumAI(Game& game)
         {
             bool hit = playerBoard->markHit(x, y, game);
 
+            for (const ShipData& ship : playerBoard->getShips())
+            {
+                if (ship.isSunk() && ship.contains(x, y))
+                {
+                    game.currentHits.clear();
+                    game.targetQueue.clear();      
+                    game.orientation = "none";
+                    hit = false;
+                }
+            }
+
             if (hit) 
             {
                 game.currentHits.emplace_back(x, y);
@@ -118,11 +135,11 @@ std::pair<int, int> EnemyTurnState::performMediumAI(Game& game)
                 {
                     if (game.currentHits[0].first == game.currentHits[1].first)
                     {
-                        game.orientation = "horizontal";
+                        game.orientation = "vertical";
                     }
                     else if (game.currentHits[0].second == game.currentHits[1].second)
                     {
-                        game.orientation = "vertical";
+                        game.orientation = "horizontal";
                     }
                 }
 
@@ -177,6 +194,17 @@ std::pair<int, int> EnemyTurnState::performHardAI(Game& game)
         {
             bool hit = playerBoard->markHit(x, y, game);
 
+            for (const ShipData& ship : playerBoard->getShips())
+            {
+                if (ship.isSunk() && ship.contains(x, y))
+                {
+                    game.currentHits.clear();
+                    game.targetQueue.clear();      
+                    game.orientation = "none";
+                    hit = false;
+                }
+            }
+
             if (hit) 
             {
                 game.currentHits.emplace_back(x, y);
@@ -185,11 +213,11 @@ std::pair<int, int> EnemyTurnState::performHardAI(Game& game)
                 {
                     if (game.currentHits[0].first == game.currentHits[1].first)
                     {
-                        game.orientation = "horizontal";
+                        game.orientation = "vertical";
                     }
                     else if (game.currentHits[0].second == game.currentHits[1].second)
                     {
-                        game.orientation = "vertical";
+                        game.orientation = "horizontal";
                     }
                 }
 
@@ -211,6 +239,7 @@ std::pair<int, int> EnemyTurnState::performHardAI(Game& game)
     bool hit = playerBoard -> markHit(x, y, game);
     if (hit) 
     {
+        game.currentHits.emplace_back(x, y);
         enqueueAdjacentTargets(x, y, playerBoard, game);
     }
     return { x, y };
@@ -219,9 +248,9 @@ std::pair<int, int> EnemyTurnState::performHardAI(Game& game)
 void EnemyTurnState::enqueueAdjacentTargets(int x, int y, Board* board, Game& game) 
 {
     if (x > 0 && !board -> wasAlreadyShot(x - 1, y)) game.targetQueue.emplace_back(x - 1, y);
-    if (x < 9 && !board -> wasAlreadyShot(x + 1, y)) game.targetQueue.emplace_back(x + 1, y);
+    if (x < game.getBoardSize() - 1 && !board -> wasAlreadyShot(x + 1, y)) game.targetQueue.emplace_back(x + 1, y);
     if (y > 0 && !board -> wasAlreadyShot(x, y - 1)) game.targetQueue.emplace_back(x, y - 1);
-    if (y < 9 && !board -> wasAlreadyShot(x, y + 1)) game.targetQueue.emplace_back(x, y + 1);
+    if (y < game.getBoardSize() - 1 && !board -> wasAlreadyShot(x, y + 1)) game.targetQueue.emplace_back(x, y + 1);
 }
 
 void EnemyTurnState::enqueueNextTarget(int x, int y, Board* board, Game& game) 

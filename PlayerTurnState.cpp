@@ -1,6 +1,6 @@
 #include "PlayerTurnState.h"
+#include "MainMenuState.h"
 #include "EnemyTurnState.h"
-#include "WinState.h"
 #include "Renderer.h"
 #include "Game.h"
 #include "InputParseHandler.h"
@@ -17,7 +17,7 @@ void PlayerTurnState::enter(Game& game)
     if (game.getPlayerBoard() && game.getOpponentBoard()) 
     {
         Renderer::Draw(*game.getPlayerBoard(), *game.getOpponentBoard(), game.getShipCount(), game.getBoardSize());
-        std::cout << "\n\n=== Player turn started ===";
+        std::cout << "\n\n=== Player turn started ===\n";
     } 
     else
     {
@@ -58,7 +58,9 @@ void PlayerTurnState::update(Game& game)
     if(game.getOpponentBoard()->allShipsSunk()){
         game.incrementPlayerHit();
         game.incrementPlayerTurn();
-        game.changeState(new WinState());
+        Renderer::ShowEndScreen(true, game);
+        game.changeState(new MainMenuState());
+        //game.changeState(new WinState());
         return;
     }
 
@@ -67,17 +69,21 @@ void PlayerTurnState::update(Game& game)
     if(targetCellState == Hit)
     {
         game.incrementPlayerHit();
+        std::cout << "\nDirect hit! Fire again.\n";
         game.changeState(new PlayerTurnState());
     }
     else
     {
         game.incrementPlayerMiss();
-       game.changeState(new EnemyTurnState());
+        game.changeState(new EnemyTurnState());
     }
 }
 
 void PlayerTurnState::exit(Game& game)
 {
-    std::cout << "\n=== Player turn ended ===\n";
-    system("pause");
+    if(!game.getOpponentBoard() -> allShipsSunk())
+    {
+        std::cout << "\n=== Player turn ended ===\n";
+        system("pause");
+    }
 }

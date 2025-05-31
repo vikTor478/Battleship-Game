@@ -11,6 +11,12 @@ enum DifficultyLevel
     Hard,
 };
 
+enum GameMode
+{
+    Standart,
+    RandomShips,
+};
+
 class GameState;
 
 class Game
@@ -25,11 +31,13 @@ public:
 
     void setBoardSize(int size);
     void setDifficultyLevel(DifficultyLevel difficultyLevel);
+    void setGameMode(GameMode gameMode);
     void setPlayerBoard(Board* playerBoard);
     void setOpponentBoard(Board* opponentBoard);
 
     int getBoardSize();
     DifficultyLevel getDifficultyLevel() const;
+    GameMode getGameMode() const;
     Board* getPlayerBoard();
     Board* getOpponentBoard();
 
@@ -37,7 +45,7 @@ public:
     int getShipCount() const;
     std::vector<std::pair<int, int>> targetQueue;
     std::vector<std::pair<int, int>> currentHits;  
-    std::string orientation;
+    std::string orientation = "none";
 
     void incrementPlayerTurn();
     void incrementPlayerHit();
@@ -56,8 +64,9 @@ public:
 
 private:
     DifficultyLevel difficultyLevel;
+    GameMode gameMode = Standart;
     int shipCount;
-    int boardSize;
+    int boardSize = 0;
     GameState* currentState;
     Board* playerBoard;
     Board* opponentBoard;

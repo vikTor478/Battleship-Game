@@ -76,6 +76,11 @@ void Game::setDifficultyLevel(DifficultyLevel level)
     difficultyLevel = level;
 }
 
+void Game::setGameMode(GameMode mode)
+{
+    gameMode = mode;
+}
+
 void Game::setPlayerBoard(Board* board)
 {
     if(playerBoard) { delete playerBoard; }
@@ -96,6 +101,11 @@ void Game::setBoardSize(int size)
 DifficultyLevel Game::getDifficultyLevel() const
 {
     return difficultyLevel;
+}
+
+GameMode Game::getGameMode() const
+{
+    return gameMode;
 }
 
 Board* Game::getPlayerBoard()
