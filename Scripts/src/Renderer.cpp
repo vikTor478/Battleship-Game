@@ -16,8 +16,8 @@ void Renderer::Draw(const Board& playerBoard, const Board& opponentBoard, int sh
         std::cout<<"in this game\n";
     }
     
-    std::cout << "           You            ";
-    std::cout << "            Opponent";
+    std::cout << std::string(boardSize, ' ') << "You" << std::string(boardSize*2, ' ');
+    std::cout << "      Opponent";
     std::cout << std::endl;
     
     std::cout << "  ";

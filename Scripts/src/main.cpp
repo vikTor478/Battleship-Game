@@ -12,6 +12,6 @@ int main()
 
     Game game;
 
-    game.changeState(new MainMenuState());
+    game.changeState(new States::MainMenuState());
     game.run();
 }

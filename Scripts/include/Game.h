@@ -2,7 +2,10 @@
 #define GAME_H
 
 #include "Board.h"
+#include "GameState.h"
 #include <iostream>
+
+using namespace States;
 
 enum DifficultyLevel 
 {
@@ -26,7 +29,7 @@ public:
     ~Game();
 
     void run();
-    void changeState(GameState* newState);
+    void changeState(States::GameState* newState);
     void quit();
 
     void setBoardSize(int size);
@@ -69,7 +72,7 @@ private:
     GameMode gameMode = Standart;
     int shipCount;
     int boardSize = 0;
-    GameState* currentState;
+    States::GameState* currentState;
     Board* playerBoard;
     Board* opponentBoard;
     bool running;

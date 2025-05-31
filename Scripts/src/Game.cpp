@@ -47,7 +47,7 @@ int Game::getBoardSize()
     return boardSize;
 }
 
-void Game::changeState(GameState* newState)
+void Game::changeState(States::GameState* newState)
 {
     if (currentState)
     {

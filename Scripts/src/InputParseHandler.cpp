@@ -10,7 +10,17 @@ std::pair<int, int> InputParseHandler::parseCoordinates(const std::string& input
     }
 
     char column = std::toupper(input[0]);
-    int row = std::stoi(input.substr(1));
+    int row;
+
+    try
+    {
+        row = std::stoi(input.substr(1));
+    }
+    catch (const std::exception&)
+    {
+        return { -1, -1 };
+    }
+
 
     int x = column - 'A';
     int y = row - 1;
