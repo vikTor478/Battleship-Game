@@ -4,11 +4,12 @@
 #include <limits>
 #include <iomanip>
 
-void Renderer::Draw(const Board& playerBoard, const Board& opponentBoard, int shipCount) 
+void Renderer::Draw(const Board& playerBoard, const Board& opponentBoard, int shipCount, int boardSize) 
 {
     system("cls");
 
-    if(shipCount != -1){
+    if(shipCount != -1)
+    {
         std::cout<<"You and your opponent both have "<<shipCount;
         if(shipCount == 1) std::cout<<" ship ";
         else std::cout<<" ships ";
@@ -18,9 +19,9 @@ void Renderer::Draw(const Board& playerBoard, const Board& opponentBoard, int sh
     std::cout << "           You            ";
     std::cout << "            Opponent";
     std::cout << std::endl;
-
+    
     std::cout << "  ";
-    for (char c = 'A'; c <= 'J'; ++c)
+    for (char c = 'A'; c < 'A' + boardSize; ++c)
     {
         std::cout << " " << c;
     }
@@ -28,53 +29,36 @@ void Renderer::Draw(const Board& playerBoard, const Board& opponentBoard, int sh
     std::cout << "        ";
 
     std::cout << "  ";
-    for (char c = 'A'; c <= 'J'; ++c)
+    for (char c = 'A'; c < 'A' + boardSize; ++c)
     {
         std::cout << " " << c;
     }
 
     std::cout << std::endl;
 
-    for (int x = 1; x <= 10; ++x) 
+    for (int y = 1; y <= boardSize; ++y) 
     {
-        if (x < 10)
+        std::cout << std::setw(2) << y;
+        for (int x = 0; x < boardSize; ++x) 
         {
-            std::cout << " " << x;
-        }
-        else
-        {
-            std::cout << x;
-        }
-
-        for (int y = 0; y < 10; ++y) 
-        {
-            CellState state = playerBoard.getCellState(x - 1, y);
-            char symbol = '~';
-            if (state == Ship) symbol = 'S';
-            else if (state == Hit) symbol = 'X';
-            else if (state == Miss) symbol = 'o';
-
+            CellState state = playerBoard.getCellState(x, y - 1);
+            char symbol = playerBoard.getSymbolAt(x, y - 1);
             std::cout << " " << symbol;
         }
 
         std::cout << "        ";
-        if (x < 10)
+
+        std::cout << std::setw(2) << y;
+        for (int x = 0; x < boardSize; ++x) 
         {
-            std::cout << " " << x;
-        }
-        else
-        {
-            std::cout << x;
-        }
-        for (int y = 0; y < 10; ++y) 
-        {
-            CellState state = opponentBoard.getCellState(x - 1, y);;
+            CellState state = opponentBoard.getCellState(x, y - 1);
             char symbol = '~';
             if (state == Hit) symbol = 'X';
             else if (state == Miss) symbol = 'o';
 
             std::cout << " " << symbol;
         }
+
         std::cout << std::endl;
     }
 }

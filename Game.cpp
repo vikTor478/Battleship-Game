@@ -42,6 +42,11 @@ int Game::getShipCount() const{
     return shipCount;
 }
 
+int Game::getBoardSize()
+{
+    return boardSize;
+}
+
 void Game::changeState(GameState* newState)
 {
     if (currentState)
@@ -71,6 +76,11 @@ void Game::setDifficultyLevel(DifficultyLevel level)
     difficultyLevel = level;
 }
 
+void Game::setGameMode(GameMode mode)
+{
+    gameMode = mode;
+}
+
 void Game::setPlayerBoard(Board* board)
 {
     if(playerBoard) { delete playerBoard; }
@@ -83,9 +93,19 @@ void Game::setOpponentBoard(Board* board)
     opponentBoard = board;
 }
 
+void Game::setBoardSize(int size)
+{
+    boardSize = size;
+}
+
 DifficultyLevel Game::getDifficultyLevel() const
 {
     return difficultyLevel;
+}
+
+GameMode Game::getGameMode() const
+{
+    return gameMode;
 }
 
 Board* Game::getPlayerBoard()
@@ -112,4 +132,17 @@ double Game::getPlayerAccuracy() const{
     if(totalShots==0) return 0.0;
 
     return (static_cast<double>(playerHits) / totalShots) * 100;
+}
+
+void Game::fullRestart()
+{
+    delete playerBoard;
+    delete opponentBoard;
+    playerTurns = 0;
+    playerHits = 0;
+    playerMisses = 0;
+    shipCount = 0;
+    boardSize = 0;
+    difficultyLevel = Easy;
+    gameMode = Standart;
 }

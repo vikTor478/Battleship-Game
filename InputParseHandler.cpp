@@ -2,7 +2,7 @@
 #include <cctype>
 #include <iostream>
 
-std::pair<int, int> InputParseHandler::parseCoordinates(const std::string& input) 
+std::pair<int, int> InputParseHandler::parseCoordinates(const std::string& input, int boardSize) 
 {
     if (input.length() < 2 || input.length() > 3)
     {
@@ -12,10 +12,10 @@ std::pair<int, int> InputParseHandler::parseCoordinates(const std::string& input
     char column = std::toupper(input[0]);
     int row = std::stoi(input.substr(1));
 
-    int y = column - 'A';
-    int x = row - 1;
+    int x = column - 'A';
+    int y = row - 1;
 
-    if (x < 0 || x >= 10 || y < 0 || y >= 10)
+    if (x < 0 || x >= boardSize || y < 0 || y >= boardSize)
     {
         return { -1, -1 };
     }
@@ -23,9 +23,9 @@ std::pair<int, int> InputParseHandler::parseCoordinates(const std::string& input
     return { x, y };
 }
 
-std::string InputParseHandler::parseToString(int x, int y)
+std::string InputParseHandler::parseToString(int x, int y, int boardSize)
 {
-    if (x < 0 || x >= 10 || y < 0 || y >= 10) 
+    if (x < 0 || x >= boardSize || y < 0 || y >= boardSize) 
     {
         throw std::out_of_range("Coordinates out of board range");
     }
