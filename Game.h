@@ -56,6 +56,8 @@ public:
     int getPlayerMisses() const;
     double getPlayerAccuracy() const;
 
+    void fullRestart();
+
     Game& operator++();
 
     operator bool() const;
@@ -63,7 +65,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Game& game);
 
 private:
-    DifficultyLevel difficultyLevel;
+    DifficultyLevel difficultyLevel = Easy;
     GameMode gameMode = Standart;
     int shipCount;
     int boardSize = 0;

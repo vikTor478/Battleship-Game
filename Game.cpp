@@ -133,3 +133,16 @@ double Game::getPlayerAccuracy() const{
 
     return (static_cast<double>(playerHits) / totalShots) * 100;
 }
+
+void Game::fullRestart()
+{
+    delete playerBoard;
+    delete opponentBoard;
+    playerTurns = 0;
+    playerHits = 0;
+    playerMisses = 0;
+    shipCount = 0;
+    boardSize = 0;
+    difficultyLevel = Easy;
+    gameMode = Standart;
+}

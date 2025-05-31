@@ -60,7 +60,6 @@ void PlayerTurnState::update(Game& game)
         game.incrementPlayerTurn();
         Renderer::ShowEndScreen(true, game);
         game.changeState(new MainMenuState());
-        //game.changeState(new WinState());
         return;
     }
 
@@ -85,5 +84,10 @@ void PlayerTurnState::exit(Game& game)
     {
         std::cout << "\n=== Player turn ended ===\n";
         system("pause");
+    }
+    else
+    {
+        game.fullRestart();
+        game.quit();
     }
 }

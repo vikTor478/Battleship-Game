@@ -76,6 +76,8 @@ bool Board::markHit(int x, int y, Game& game)
     {
         grid[x][y] = Hit;
 
+        std::cout << "\nHIT at " << InputParseHandler::parseToString(x, y, game.getBoardSize()) << "\n";
+
         for (ShipData& ship : ships)
         {
             if (!ship.isSunk() && ship.contains(x, y))
@@ -83,14 +85,12 @@ bool Board::markHit(int x, int y, Game& game)
                 ship.hits++;
                 if (ship.isSunk()) 
                 {
-                    std::cout << "Ship sunk!\n";
+                    std::cout << "Ship sunk! Area around ship revealed! \n";
                     markSurroundingCellsAsMiss(ship.coordinates, game.getBoardSize());
                 }
                 break;
             }
         }
-
-        std::cout << "\nHIT at " << InputParseHandler::parseToString(x, y, game.getBoardSize()) << "\n";
         return true;
     }    
     else

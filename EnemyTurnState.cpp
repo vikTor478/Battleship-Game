@@ -59,11 +59,10 @@ void EnemyTurnState::update(Game& game)
             break;
     }
 
-    if(game.getPlayerBoard()->allShipsSunk())
+    if(game.getPlayerBoard() -> allShipsSunk())
     {
         Renderer::ShowEndScreen(false, game);
         game.changeState(new MainMenuState());
-        //game.changeState(new LoseState());
         return;
     }
 
@@ -84,6 +83,11 @@ void EnemyTurnState::exit(Game& game)
     {
         std::cout << "\n--- Enemy turn ended ---\n";
         system("pause");
+    }
+    else
+    {
+        game.fullRestart();
+        game.quit();
     }
 }
 
